@@ -1,5 +1,8 @@
 {
-  "name": "egg-typed-di",
+  "name": "@ali/egg-typed-di",
+  "publishConfig": {
+    "registry": "http://registry.npm.alibaba-inc.com"
+  },
   "version": "0.1.0",
   "description": "typed for egg.",
   "main": "lib/index.js",
@@ -11,7 +14,7 @@
     "**/*.d.ts"
   ],
   "dependencies": {
-    "egg": "^2.4.1",
+    "chair": "release-1.4",
     "power-di": "^1.4.2",
     "tslib": "^1.9.0"
   },
