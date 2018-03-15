@@ -1,0 +1,59 @@
+{
+  "name": "egg-typed-di",
+  "version": "0.1.0",
+  "description": "typed for egg.",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "app/**/*.js",
+    "config/**/*.js",
+    "lib/**/*.js",
+    "**/*.d.ts"
+  ],
+  "dependencies": {
+    "egg": "^2.4.1",
+    "power-di": "^1.4.2",
+    "tslib": "^1.9.0"
+  },
+  "devDependencies": {
+    "autod": "^3.0.1",
+    "egg-bin": "^4.3.7",
+    "egg-ci": "^1.8.0",
+    "egg-mock": "^3.14.0",
+    "reflect-metadata": "^0.1.12",
+    "rimraf": "^2.6.2",
+    "supertest": "^3.0.0",
+    "typescript": "^2.7.1"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "scripts": {
+    "test": "npm run test-local",
+    "test-local": "egg-bin test",
+    "cov": "egg-bin cov",
+    "ci": "npm run cov",
+    "autod": "autod",
+    "ts": "rimraf app/**/*.js lib/**/*.js && tsc",
+    "prepublish": "npm run ts",
+    "postpublish": "node scripts/published.js"
+  },
+  "ci": {
+    "version": "8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhang740/egg-typed-di.git"
+  },
+  "keywords": [
+    "ts",
+    "egg",
+    "egg-framework"
+  ],
+  "author": "zhang740",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zhang740/egg-typed-di/issues"
+  },
+  "homepage": "https://github.com/zhang740/egg-typed-di#readme"
+}
