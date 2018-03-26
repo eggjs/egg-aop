@@ -6,26 +6,26 @@ import { IocContext } from 'power-di';
 import { lazyInject as pdLazyInject } from 'power-di/helper';
 
 const ctxSymbol = Symbol('ctx');
-function setCtx(target: any, ctx: any) {
+export function setCtx(target: any, ctx: any) {
   Object.defineProperty(target, ctxSymbol, {
     enumerable: false,
     writable: false,
     value: ctx
   });
 }
-function getCtx(target: any) {
+export function getCtx(target: any) {
   return target[ctxSymbol] || target.ctx;
 }
 
 const appSymbol = Symbol('app');
-function setApp(target: any, app: any) {
+export function setApp(target: any, app: any) {
   Object.defineProperty(target, appSymbol, {
     enumerable: false,
     writable: false,
     value: app
   });
 }
-function getApp(target: any) {
+export function getApp(target: any) {
   return target[appSymbol] || target.app;
 }
 
