@@ -1,7 +1,7 @@
 import {
   BaseContextClass as EggBCC,
 } from './base';
-import { getInstanceByClassType } from './decorators';
+import { getInstanceByClassType } from './getInstance';
 
 export class BaseContextClass extends EggBCC {
 
