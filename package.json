@@ -1,6 +1,6 @@
 {
   "name": "egg-typed-di",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "typed for egg.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -10,8 +10,10 @@
     "lib/**/*.js",
     "**/*.d.ts"
   ],
+  "eggPlugin": {
+    "name": "di"
+  },
   "dependencies": {
-    "egg": "^2.4.1",
     "power-di": "^1.4.2",
     "tslib": "^1.9.0"
   },
