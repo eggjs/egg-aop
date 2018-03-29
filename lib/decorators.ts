@@ -1,4 +1,4 @@
-import { getGlobalTypeByDecorator } from 'power-di/lib/helper/decorators';
+import { getClsTypeByDecorator } from 'power-di/lib/helper/decorators';
 import { lazyInject as pdLazyInject } from 'power-di/helper';
 import { getApp, getCtx } from './appctx';
 import { getInstance, InstanceSource } from './getInstance';
@@ -38,7 +38,7 @@ export function application(classType?: any) {
 export function lazyInject(classType?: any): any {
   return (target: any, key: any) => {
     pdLazyInject(classType)(target, key);
-    classType = getGlobalTypeByDecorator(classType, target, key);
+    classType = getClsTypeByDecorator(classType, target, key);
 
     return {
       configurable: true,
