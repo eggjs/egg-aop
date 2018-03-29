@@ -14,10 +14,12 @@ export function setCreateInstanceHook(func: CreateInstanceHookFunction) {
 }
 
 export const contextTypeSymbol = Symbol('contextType');
-export const keyTypeSymbol = Symbol('keyType');
+export const mapperClsTypeSymbol = Symbol('mapperClsType');
 
 export function getInstance<T = any>(clsType: any, app: any, ctx: any) {
   let ioc: IocContext = undefined;
+  clsType = clsType[mapperClsTypeSymbol] || clsType;
+
   const from = clsType[contextTypeSymbol];
   if (from === 'Application') {
     ioc = app.iocContext;
@@ -37,8 +39,7 @@ export function getInstance<T = any>(clsType: any, app: any, ctx: any) {
       value = ciHooks.reduce((pre, cur) => cur(pre, app, ctx), new clsType(ctx));
       setCtx(value, ctx);
     }
-    const keyType = clsType[keyTypeSymbol];
-    ioc.register(value, keyType || clsType);
+    ioc.register(value, clsType);
     ioc.inject(value, (_globalType, typeCls) => {
       return getInstance(typeCls, app, ctx);
     });

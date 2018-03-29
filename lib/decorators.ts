@@ -2,7 +2,7 @@ import { getClsTypeByDecorator } from 'power-di/lib/helper/decorators';
 import { lazyInject as pdLazyInject } from 'power-di/helper';
 import { getApp, getCtx } from './appctx';
 import { getInstance, InstanceSource } from './getInstance';
-import { contextTypeSymbol, keyTypeSymbol } from './getInstance';
+import { contextTypeSymbol, mapperClsTypeSymbol } from './getInstance';
 
 /**
  * register component
@@ -17,8 +17,8 @@ export function register(from: InstanceSource, classType?: any, keyType?: any) {
     Object.defineProperty(classType || target, contextTypeSymbol, {
       value: from
     });
-    Object.defineProperty(classType || target, keyTypeSymbol, {
-      value: keyType
+    Object.defineProperty(keyType, mapperClsTypeSymbol, {
+      value: classType || target
     });
   };
 }
