@@ -2,6 +2,7 @@
 import { IocContext } from 'power-di';
 import { getGlobalType } from 'power-di/utils';
 import { setApp, setCtx } from './appctx';
+import { typeLoader } from './typeLoader';
 
 export type InstanceSource = 'Context' | 'Application';
 
@@ -14,29 +15,34 @@ export function setCreateInstanceHook(func: CreateInstanceHookFunction) {
 }
 
 export const contextTypeSymbol = Symbol('contextType');
-export const mapperClsTypeSymbol = Symbol('mapperClsType');
 
 export function getInstance<T = any>(clsType: any, app: any, ctx: any) {
   let ioc: IocContext = undefined;
-  clsType = clsType[mapperClsTypeSymbol] || clsType;
 
-  const from = clsType[contextTypeSymbol];
+  const targetClsType = typeLoader.get<any>(clsType);
+  const from = targetClsType[contextTypeSymbol];
+
   if (from === 'Application') {
     ioc = app.iocContext;
   } else if (from === 'Context') {
     ioc = ctx.iocContext;
+  } else {
+    throw new Error(`ioc context NOT found! [${getGlobalType(clsType)}]`);
   }
 
   let value = ioc.get<T>(clsType);
   if (!value) {
+    if (!targetClsType) {
+      throw new Error(`classType NOT registered! [${getGlobalType(clsType)}]`);
+    }
     if (from === 'Application') {
       if (!app) {
         throw new Error(`inject [${getGlobalType(clsType)}] MUST in Application/Context class instance.`);
       }
-      value = ciHooks.reduce((pre, cur) => cur(pre, app), new clsType(app));
+      value = ciHooks.reduce((pre, cur) => cur(pre, app), new targetClsType(app));
       setApp(value, app);
     } else if (from === 'Context') {
-      value = ciHooks.reduce((pre, cur) => cur(pre, app, ctx), new clsType(ctx));
+      value = ciHooks.reduce((pre, cur) => cur(pre, app, ctx), new targetClsType(ctx));
       setCtx(value, ctx);
     }
     ioc.register(value, clsType);
