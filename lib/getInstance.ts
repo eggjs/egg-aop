@@ -14,6 +14,7 @@ export function setCreateInstanceHook(func: CreateInstanceHookFunction) {
 }
 
 export const contextTypeSymbol = Symbol('contextType');
+export const keyTypeSymbol = Symbol('keyType');
 
 export function getInstance<T = any>(clsType: any, app: any, ctx: any) {
   let ioc: IocContext = undefined;
@@ -36,7 +37,8 @@ export function getInstance<T = any>(clsType: any, app: any, ctx: any) {
       value = ciHooks.reduce((pre, cur) => cur(pre, app, ctx), new clsType(ctx));
       setCtx(value, ctx);
     }
-    ioc.register(value, clsType);
+    const keyType = clsType[keyTypeSymbol];
+    ioc.register(value, keyType || clsType);
     ioc.inject(value, (_globalType, typeCls) => {
       return getInstance(typeCls, app, ctx);
     });
