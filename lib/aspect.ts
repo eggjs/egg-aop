@@ -4,8 +4,8 @@ function isGeneratorFunction(fn: any) {
 }
 
 export interface AspectPoint<T = any> {
-  before?: (inst: T) => void;
-  after?: (inst: T) => void;
+  before?: (inst: T, args?: any[]) => void;
+  after?: (inst: T, ret?: any) => void;
 }
 
 function funcWrapper(point: AspectPoint, fn: Function) {
@@ -13,22 +13,22 @@ function funcWrapper(point: AspectPoint, fn: Function) {
 
   if (isGeneratorFunction(fn)) {
     newFn = function* (...args: any[]) {
-      point.before && point.before(this);
+      point.before && point.before(this, args);
       const result = yield fn.apply(this, args);
-      point.after && point.after(this);
+      point.after && point.after(this, result);
       return result;
     };
   } else {
     // 非原生支持async的情况下没有有效方法判断async函数
     newFn = function (...args: any[]) {
-      point.before && point.before(this);
+      point.before && point.before(this, args);
       const result = fn.apply(this, args);
       if (result instanceof Promise) {
         result.then(() => {
-          point.after && point.after(this);
+          point.after && point.after(this, result);
         });
       } else {
-        point.after && point.after(this);
+        point.after && point.after(this, result);
       }
       return result;
     };
