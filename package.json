@@ -1,7 +1,7 @@
 {
-  "name": "egg-typed-di",
-  "version": "0.2.4",
-  "description": "typed for egg.",
+  "name": "egg-aop",
+  "version": "0.3.0",
+  "description": "aop for egg.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -45,7 +45,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zhang740/egg-typed-di.git"
+    "url": "https://github.com/zhang740/egg-aop.git"
   },
   "keywords": [
     "ts",
@@ -55,7 +55,7 @@
   "author": "zhang740",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zhang740/egg-typed-di/issues"
+    "url": "https://github.com/zhang740/egg-aop/issues"
   },
-  "homepage": "https://github.com/zhang740/egg-typed-di#readme"
+  "homepage": "https://github.com/zhang740/egg-aop#readme"
 }
