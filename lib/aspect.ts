@@ -24,8 +24,8 @@ function funcWrapper(point: AspectPoint, fn: Function) {
       point.before && point.before(this, args);
       const result = fn.apply(this, args);
       if (result instanceof Promise) {
-        result.then(() => {
-          point.after && point.after(this, result);
+        result.then((ret) => {
+          point.after && point.after(this, ret);
         });
       } else {
         point.after && point.after(this, result);
@@ -40,7 +40,7 @@ function funcWrapper(point: AspectPoint, fn: Function) {
 
 export function aspect<T = any>(point: AspectPoint<T> = {}) {
   return (target: any, key: string, descriptor: any) => {
-    let fn = funcWrapper(point, descriptor.value);
+    let fn = funcWrapper(point, descriptor.value || target[key]);
 
     Object.defineProperty(target, key, {
       configurable: true,
