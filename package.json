@@ -1,6 +1,6 @@
 {
   "name": "egg-aop",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "aop for egg.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -14,7 +14,7 @@
     "name": "aop"
   },
   "dependencies": {
-    "power-di": "^1.4.2",
+    "power-di": "^1.4.6",
     "tslib": "^1.9.0"
   },
   "devDependencies": {
