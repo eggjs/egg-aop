@@ -3,9 +3,12 @@ function isGeneratorFunction(fn: any) {
   return typeof fn === 'function' && Object.getPrototypeOf(fn) === generatorFuncPrototype;
 }
 
+export type Throwable = Error | any;
+
 export interface AspectPoint<T = any> {
-  before?: (inst: T, args?: any[]) => void;
-  after?: (inst: T, ret?: any) => void;
+  before?: (inst: T, args?: any[]) => any[] | void;
+  after?: (inst: T, ret?: any) => any | void;
+  onError?: (inst: T, error: Error) => Throwable | void;
 }
 
 function funcWrapper(point: AspectPoint, fn: Function) {
@@ -13,22 +16,44 @@ function funcWrapper(point: AspectPoint, fn: Function) {
 
   if (isGeneratorFunction(fn)) {
     newFn = function* (...args: any[]) {
-      point.before && point.before(this, args);
-      const result = yield fn.apply(this, args);
-      point.after && point.after(this, result);
-      return result;
+      args = point.before && point.before(this, args) || args;
+      try {
+        const result = yield fn.apply(this, args);
+        point.after && point.after(this, result);
+        return result;
+      } catch (error) {
+        if (point.onError) {
+          error = point.onError(this, error) || error;
+        }
+        throw error;
+      }
     };
   } else {
     // 非原生支持async的情况下没有有效方法判断async函数
     newFn = function (...args: any[]) {
-      point.before && point.before(this, args);
-      const result = fn.apply(this, args);
+      args = point.before && point.before(this, args) || args;
+      let result = fn.apply(this, args);
       if (result instanceof Promise) {
-        result.then((ret) => {
+        result = result.then((ret) => {
           point.after && point.after(this, ret);
+          return ret;
         });
+        if (point.onError) {
+          result = (result as Promise<any>)
+            .catch(error => {
+              error = point.onError(this, error) || error;
+              throw error;
+            });
+        }
       } else {
-        point.after && point.after(this, result);
+        try {
+          point.after && point.after(this, result);
+        } catch (error) {
+          if (point.onError) {
+            error = point.onError(this, error) || error;
+          }
+          throw error;
+        }
       }
       return result;
     };
