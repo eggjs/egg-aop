@@ -11,51 +11,48 @@ export interface AspectPoint<T = any> {
   onError?: (inst: T, error: Error) => Throwable | void;
 }
 
+function getFinalData(target: any, data: any, func: any) {
+  if (!func) {
+    return data;
+  }
+  const newData = func(target, data);
+  return newData === undefined ? data : newData;
+}
+
 function funcWrapper(point: AspectPoint, fn: Function) {
   let newFn: any;
 
   if (isGeneratorFunction(fn)) {
     newFn = function* (...args: any[]) {
-      args = point.before && point.before(this, args) || args;
       try {
-        const result = yield fn.apply(this, args);
-        point.after && point.after(this, result);
-        return result;
+        let result = yield fn.apply(this, getFinalData(this, args, point.before));
+        return getFinalData(this, result, point.after);
       } catch (error) {
-        if (point.onError) {
-          error = point.onError(this, error) || error;
-        }
-        throw error;
+        throw getFinalData(this, error, point.onError);
       }
     };
   } else {
     // 非原生支持async的情况下没有有效方法判断async函数
     newFn = function (...args: any[]) {
-      args = point.before && point.before(this, args) || args;
-      let result = fn.apply(this, args);
+      let result = fn.apply(this, getFinalData(this, args, point.before));
       if (result instanceof Promise) {
         result = result.then((ret) => {
-          point.after && point.after(this, ret);
-          return ret;
+          return getFinalData(this, ret, point.after);
         });
         if (point.onError) {
           result = (result as Promise<any>)
             .catch(error => {
-              error = point.onError(this, error) || error;
-              throw error;
+              throw getFinalData(this, error, point.onError);
             });
         }
+        return result;
       } else {
         try {
-          point.after && point.after(this, result);
+          return getFinalData(this, result, point.after);
         } catch (error) {
-          if (point.onError) {
-            error = point.onError(this, error) || error;
-          }
-          throw error;
+          throw getFinalData(this, error, point.onError);
         }
       }
-      return result;
     };
   }
 
