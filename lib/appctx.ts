@@ -1,4 +1,4 @@
-const ctxSymbol = Symbol('ctx');
+export const ctxSymbol = Symbol('ctx');
 export function setCtx(target: any, ctx: any) {
   Object.defineProperty(target, ctxSymbol, {
     enumerable: false,
@@ -10,7 +10,7 @@ export function getCtx(target: any) {
   return target[ctxSymbol] || target.ctx;
 }
 
-const appSymbol = Symbol('app');
+export const appSymbol = Symbol('app');
 export function setApp(target: any, app: any) {
   Object.defineProperty(target, appSymbol, {
     enumerable: false,
