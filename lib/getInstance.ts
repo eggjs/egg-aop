@@ -2,7 +2,7 @@
 import { IocContext } from 'power-di';
 import { getGlobalType } from 'power-di/utils';
 import { setApp, setCtx, ctxSymbol } from './appctx';
-import { typeLoader } from './typeLoader';
+import { typeLoader, register } from './typeLoader';
 
 export type InstanceSource = 'Context' | 'Application';
 
@@ -26,9 +26,17 @@ function registerInstance(ioc: IocContext, value: any, clsType: any, app: any, c
 export function getInstance<T = any>(clsType: any, app: any, ctx: any) {
   let ioc: IocContext = undefined;
 
-  let useCtxProxyForAppComponent = app.config.aop.useCtxProxyForAppComponent;
+  const useCtxProxyForAppComponent = app.config.aop.useCtxProxyForAppComponent;
+  const autoRegisterToCtx = app.config.aop.autoRegisterToCtx;
+
+  if (autoRegisterToCtx && !typeLoader.has(clsType)) {
+    register(clsType, clsType, 'Context');
+  }
 
   const targetClsType = typeLoader.get<any>(clsType);
+  if (!targetClsType) {
+    throw new Error(`ClassType [${getGlobalType(clsType)}] NOT found!`);
+  }
   const from = targetClsType[contextTypeSymbol];
 
   if (from === 'Application') {

@@ -1,8 +1,8 @@
 import { getClsTypeByDecorator } from 'power-di/lib/helper/decorators';
 import { lazyInject as pdLazyInject } from 'power-di/helper';
 import { getApp, getCtx } from './appctx';
-import { getInstance, InstanceSource, contextTypeSymbol } from './getInstance';
-import { typeLoader } from './typeLoader';
+import { getInstance, InstanceSource } from './getInstance';
+import { register as typeRegister } from './typeLoader';
 
 /**
  * register component
@@ -15,10 +15,7 @@ import { typeLoader } from './typeLoader';
 export function register(from: InstanceSource, classType?: any, keyType?: any) {
   return (target: any) => {
     const clsType = classType || target;
-    Object.defineProperty(clsType, contextTypeSymbol, {
-      value: from
-    });
-    typeLoader.register(clsType, keyType || clsType, { autoNew: false });
+    typeRegister(clsType, keyType || clsType, from);
   };
 }
 

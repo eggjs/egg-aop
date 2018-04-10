@@ -1,5 +1,5 @@
 export * from './decorators';
 export { getApp, getCtx } from './appctx';
 export * from './getInstance';
-export * from './typeLoader';
+export { typeLoader } from './typeLoader';
 export * from './aspect';
