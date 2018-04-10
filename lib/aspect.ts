@@ -34,24 +34,24 @@ function funcWrapper(point: AspectPoint, fn: Function) {
   } else {
     // 非原生支持async的情况下没有有效方法判断async函数
     newFn = function (...args: any[]) {
-      let result = fn.apply(this, getFinalData(this, args, point.before));
-      if (result instanceof Promise) {
-        result = result.then((ret) => {
-          return getFinalData(this, ret, point.after);
-        });
-        if (point.onError) {
-          result = (result as Promise<any>)
-            .catch(error => {
-              throw getFinalData(this, error, point.onError);
-            });
-        }
-        return result;
-      } else {
-        try {
+      try {
+        let result = fn.apply(this, getFinalData(this, args, point.before));
+        if (result instanceof Promise) {
+          result = result.then((ret) => {
+            return getFinalData(this, ret, point.after);
+          });
+          if (point.onError) {
+            result = (result as Promise<any>)
+              .catch(error => {
+                throw getFinalData(this, error, point.onError);
+              });
+          }
+          return result;
+        } else {
           return getFinalData(this, result, point.after);
-        } catch (error) {
-          throw getFinalData(this, error, point.onError);
         }
+      } catch (error) {
+        throw getFinalData(this, error, point.onError);
       }
     };
   }
