@@ -1,6 +1,6 @@
 {
   "name": "egg-aop",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "description": "aop for egg.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
