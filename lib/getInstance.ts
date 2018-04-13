@@ -62,6 +62,9 @@ export function getInstance<T = any>(clsType: any, app: any, ctx: any): T {
           if (property === ctxSymbol) {
             return ctx;
           }
+          if (property === 'constructor') {
+            return target[property];
+          }
           return typeof target[property] === 'function' ? target[property].bind(value) : target[property];
         }
       });
