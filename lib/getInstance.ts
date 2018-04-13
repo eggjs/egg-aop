@@ -16,14 +16,7 @@ export function setCreateInstanceHook(func: CreateInstanceHookFunction) {
 
 export const contextTypeSymbol = Symbol('contextType');
 
-function registerInstance(ioc: IocContext, value: any, clsType: any, app: any, ctx: any) {
-  ioc.register(value, clsType);
-  ioc.inject(value, (_globalType, typeCls) => {
-    return getInstance(typeCls, app, ctx);
-  });
-}
-
-export function getInstance<T = any>(clsType: any, app: any, ctx: any) {
+export function getInstance<T = any>(clsType: any, app: any, ctx: any): T {
   let ioc: IocContext = undefined;
 
   const useCtxProxyForAppComponent = app.config.aop.useCtxProxyForAppComponent;
@@ -35,7 +28,7 @@ export function getInstance<T = any>(clsType: any, app: any, ctx: any) {
 
   const targetClsType = typeLoader.get<any>(clsType);
   if (!targetClsType) {
-    throw new Error(`ClassType [${getGlobalType(clsType)}] NOT found!`);
+    throw new Error(`ClassType [${getGlobalType(clsType)}] NOT found in typeLoader!`);
   }
   const from = targetClsType[contextTypeSymbol];
 
@@ -48,47 +41,46 @@ export function getInstance<T = any>(clsType: any, app: any, ctx: any) {
   }
 
   let value = ioc.get<T>(clsType);
-  if (!value) {
-    if (!targetClsType) {
-      throw new Error(`classType NOT registered! [${getGlobalType(clsType)}]`);
-    }
-    if (from === 'Application') {
-      if (!app) {
-        throw new Error(`inject [${getGlobalType(clsType)}] MUST in Application/Context class instance.`);
-      }
+  if (value) { return value; }
 
-      if (useCtxProxyForAppComponent) {
-        value = app.iocContext.get(clsType);
-      }
+  if (from === 'Application') {
+    if (!app) {
+      throw new Error(`inject [${getGlobalType(clsType)}] MUST in Application/Context class instance.`);
+    }
+
+    if (useCtxProxyForAppComponent) {
+      value = app.iocContext.get(clsType);
 
       if (!value) {
-        value = ciHooks.reduce((pre, cur) => cur(pre, app), new targetClsType(app));
+        value = new targetClsType(app);
         setApp(value, app);
-
-        if (useCtxProxyForAppComponent) {
-          registerInstance(app.iocContext, value, clsType, app, ctx);
-        }
+        app.iocContext.register(value, clsType);
       }
 
-      if (useCtxProxyForAppComponent) {
-        value = new Proxy<any>(value, {
-          get(target, property) {
-            if (property === ctxSymbol) {
-              return ctx;
-            }
-            return target[property];
+      value = new Proxy<any>(value, {
+        get(target, property) {
+          if (property === ctxSymbol) {
+            return ctx;
           }
-        });
-      }
+          return typeof target[property] === 'function' ? target[property].bind(this) : target[property];
+        }
+      });
 
-    } else if (from === 'Context') {
-      if (!ctx) {
-        throw new Error(`inject [${getGlobalType(clsType)}] MUST in Context class instance.`);
-      }
-      value = ciHooks.reduce((pre, cur) => cur(pre, app, ctx), new targetClsType(ctx));
-      setCtx(value, ctx);
+      value = ciHooks.reduce((pre, cur) => cur(pre, app), value);
+
+    } else {
+      value = ciHooks.reduce((pre, cur) => cur(pre, app), new targetClsType(app));
+      setApp(value, app);
     }
-    registerInstance(ioc, value, clsType, app, ctx);
+
+  } else if (from === 'Context') {
+    if (!ctx) {
+      throw new Error(`inject [${getGlobalType(clsType)}] MUST in Context class instance.`);
+    }
+    value = ciHooks.reduce((pre, cur) => cur(pre, app, ctx), new targetClsType(ctx));
+    setCtx(value, ctx);
   }
+
+  ioc.register(value, clsType);
   return value;
 }
