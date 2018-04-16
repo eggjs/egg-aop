@@ -1,7 +1,5 @@
-import { getClsTypeByDecorator } from 'power-di/lib/helper/decorators';
-import { lazyInject as pdLazyInject } from 'power-di/helper';
-import { getApp, getCtx } from './appctx';
-import { getInstance, InstanceSource } from './getInstance';
+export { inject, lazyInject } from 'power-di/helper';
+import { InstanceSource } from './getInstance';
 import { register as typeRegister } from './typeLoader';
 
 /**
@@ -39,49 +37,4 @@ export function context(keyType?: any) {
  */
 export function application(keyType?: any) {
   return register('Application', undefined, keyType);
-}
-
-/**
- * lazy inject
- * This can new Class and inject app/ctx (need from ctx)
- * @export
- * @param {*} [classType] class or string
- * @returns void
- */
-export function lazyInject(classType?: any): any {
-  return (target: any, key: any) => {
-    pdLazyInject(classType)(target, key);
-    classType = getClsTypeByDecorator(classType, target, key);
-
-    return {
-      configurable: true,
-      get: function (this: any) {
-        const ctx = getCtx(this);
-        let app = getApp(this);
-
-        if (!app && ctx) {
-          app = ctx.app;
-        }
-
-        const value = getInstance(classType, app, ctx);
-
-        Object.defineProperty(this, key, {
-          configurable: true,
-          value: value
-        });
-        return value;
-      }
-    };
-  };
-}
-
-/**
- * inject
- * This can new Class and inject app/ctx (need from ctx)
- * @export
- * @param {*} [classType] class or string
- * @returns void
- */
-export function inject(classType?: any) {
-  return lazyInject(classType);
 }
