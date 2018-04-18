@@ -64,14 +64,16 @@ export function aspect<T = any>(point: AspectPoint<T> = {}) {
   return (target: any, key: string, descriptor: any) => {
     let fn = funcWrapper(point, descriptor.value || target[key]);
 
-    Object.defineProperty(target, key, {
+    const value = {
       configurable: true,
       get() {
         return fn;
       },
-      set(value) {
+      set(value: Function) {
         fn = funcWrapper(point, value);
       }
-    });
+    };
+    Object.defineProperty(target, key, value);
+    return value;
   };
 }

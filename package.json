@@ -1,6 +1,6 @@
 {
   "name": "egg-aop",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "aop for egg.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -13,27 +13,37 @@
   "eggPlugin": {
     "name": "aop"
   },
+  "egg": {
+    "typescript": true
+  },
   "dependencies": {
-    "power-di": "^1.4.6",
+    "power-di": "^1.4.8",
     "tslib": "^1.9.0"
   },
   "devDependencies": {
+    "@types/mocha": "^2.2.40",
+    "@types/node": "^7.0.12",
+    "@types/supertest": "^2.0.0",
     "autod": "^3.0.1",
-    "egg-bin": "^4.3.7",
+    "egg-bin": "^4.7.0",
     "egg-ci": "^1.8.0",
-    "egg-mock": "^3.14.0",
-    "reflect-metadata": "^0.1.12",
+    "egg-mock": "^3.17.0",
+    "egg-ts-helper": "^1.4.2",
+    "egg": "^2.7.1",
     "rimraf": "^2.6.2",
     "supertest": "^3.0.0",
-    "typescript": "^2.7.1"
+    "tslib": "^1.9.0",
+    "tslint": "^4.0.0",
+    "typescript": "^2.8.1"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=8.9.0"
   },
   "scripts": {
-    "test": "npm run test-local",
-    "test-local": "egg-bin test",
-    "cov": "egg-bin cov",
+    "test": "npm run lint -- --fix && npm run test-local",
+    "test-local": "egg-bin test -r egg-ts-helper/register",
+    "cov": "egg-bin cov -r egg-ts-helper/register",
+    "lint": "tslint .",
     "ci": "npm run cov",
     "autod": "autod",
     "ts": "rimraf app/**/*.js lib/**/*.js && tsc",
@@ -47,10 +57,14 @@
     "type": "git",
     "url": "https://github.com/zhang740/egg-aop.git"
   },
+  "eslintIgnore": [
+    "coverage"
+  ],
   "keywords": [
-    "ts",
     "egg",
-    "egg-framework"
+    "egg-aop",
+    "ts",
+    "aop"
   ],
   "author": "zhang740",
   "license": "MIT",

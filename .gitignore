@@ -9,7 +9,9 @@ run/
 package-lock.json
 /app/**/*.js
 /lib/**/*.js
-/config/*.js
-/scripts/*.js
+/test/**/*.js
+/config/**/*.js
+/scripts/**/*.js
 *.d.ts
 *.js.map
+.vscode

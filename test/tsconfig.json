@@ -15,11 +15,5 @@
     "noUnusedParameters": true,
     "importHelpers": true
   },
-  "include": [
-    "app",
-    "lib",
-    "config",
-    "scripts"
-  ],
   "compileOnSave": true
 }

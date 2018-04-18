@@ -3,12 +3,11 @@
 const request = require('supertest');
 const mm = require('egg-mock');
 
-describe('test/lib/framework.test.js', () => {
-  let app;
+describe('di auto register', () => {
+  let app: any;
   before(() => {
     app = mm.app({
-      baseDir: 'example',
-      customEgg: true,
+      baseDir: 'di-auto-register',
     });
     return app.ready();
   });
@@ -17,11 +16,10 @@ describe('test/lib/framework.test.js', () => {
 
   afterEach(mm.restore);
 
-  it('should GET /', () => {
+  it('lazyInject', () => {
     return request(app.callback())
-    .get('/')
-    .expect('framework-example_123456')
-    .expect(200);
+      .get('/')
+      .expect('hi, egg')
+      .expect(200);
   });
 });
-

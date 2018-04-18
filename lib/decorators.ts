@@ -1,6 +1,8 @@
-export { inject, lazyInject } from 'power-di/helper';
-import { InstanceSource } from './getInstance';
+import { inject as pdInject, lazyInject as pdLazyInject } from 'power-di/helper';
+import { InstanceSource, getInstance } from './getInstance';
 import { register as typeRegister } from './typeLoader';
+import { getApp, getCtx } from './appctx';
+import { getClsTypeByDecorator } from 'power-di/lib/helper/decorators';
 
 /**
  * register component
@@ -37,4 +39,51 @@ export function context(keyType?: any) {
  */
 export function application(keyType?: any) {
   return register('Application', undefined, keyType);
+}
+
+/**
+ * inject
+ * type: class or string
+ */
+export function inject(type?: any) {
+  return (target: any, key: string) => {
+    pdInject({ type })(target, key);
+    const clsType = getClsTypeByDecorator(type, target, key);
+
+    let value: any;
+    Object.defineProperty(target, key, {
+      configurable: true,
+      get() {
+        if (value !== undefined) {
+          return value;
+        }
+        const ctx = getCtx(this);
+        const app = getApp(this) || (ctx && ctx.app);
+        value = getInstance(clsType, app, ctx);
+        return target[key];
+      }
+    });
+  };
+}
+
+/**
+ * lazy inject
+ * type: class or string
+ */
+export function lazyInject(type?: any) {
+  return (target: any, key: string) => {
+    pdLazyInject({ type })(target, key);
+    const clsType = getClsTypeByDecorator(type, target, key);
+
+    const defaultValue = target[key];
+    Object.defineProperty(target, key, {
+      configurable: true,
+      get: function () {
+        const ctx = getCtx(this);
+        const app = getApp(this) || (ctx && ctx.app);
+        const value = getInstance(clsType, app, ctx);
+        return value !== undefined ? value : defaultValue;
+      },
+    });
+  };
 }

@@ -16,12 +16,6 @@ export function setCreateInstanceHook(func: CreateInstanceHookFunction) {
 
 export const contextTypeSymbol = Symbol('contextType');
 
-export function injectInstance(ioc: IocContext, inst: any, app: any, ctx: any) {
-  ioc.inject(inst, (_globalType, typeCls) => {
-    return getInstance(typeCls, app, ctx);
-  });
-}
-
 export function getInstance<T = any>(clsType: any, app: any, ctx: any): T {
   let ioc: IocContext = undefined;
 
@@ -61,7 +55,6 @@ export function getInstance<T = any>(clsType: any, app: any, ctx: any): T {
         value = new targetClsType(app);
         setApp(value, app);
         app.iocContext.register(value, clsType);
-        injectInstance(app.iocContext, value, app, ctx);
       }
 
       value = new Proxy<any>(value, {
@@ -92,6 +85,5 @@ export function getInstance<T = any>(clsType: any, app: any, ctx: any): T {
   }
 
   ioc.register(value, clsType);
-  injectInstance(ioc, value, app, ctx);
   return value;
 }
