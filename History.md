@@ -1,4 +1,12 @@
 
+0.5.0 / 2018-04-19
+==================
+
+  * refactor: aspect function params. 
+  
+  BREAKING CHANGE: 
+  - aspect function param sign.
+
 0.4.2 / 2018-04-19
 ==================
 
