@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "jsx": "react",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "preserveConstEnums": true,
+    "declaration": true,
+    "sourceMap": false,
+    "pretty": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "importHelpers": true
+  },
+  "include": [
+    "app",
+    "lib",
+    "config",
+    "scripts"
+  ],
+  "compileOnSave": true
+}

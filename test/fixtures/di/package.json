@@ -1,0 +1,6 @@
+{
+  "name": "aop-example",
+  "egg": {
+    "typescript": true
+  }
+}

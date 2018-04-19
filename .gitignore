@@ -1,0 +1,17 @@
+logs/
+npm-debug.log
+node_modules/
+coverage/
+.idea/
+run/
+.DS_Store
+*.swp
+package-lock.json
+/app/**/*.js
+/lib/**/*.js
+/test/**/*.js
+/config/**/*.js
+/scripts/**/*.js
+*.d.ts
+*.js.map
+.vscode
