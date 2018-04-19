@@ -5,18 +5,30 @@ function isGeneratorFunction(fn: any) {
 
 export type Throwable = Error | any;
 
-export interface AspectPoint<T = any> {
-  before?: (inst: T, args?: any[]) => any[] | void;
-  after?: (inst: T, ret?: any) => any | void;
-  onError?: (inst: T, error: Error) => Throwable | void;
+export interface FunctionContext<T = any> {
+  readonly inst: T;
+  readonly functionName: string;
+  args: any[];
+  ret: any;
+  err: Error;
 }
 
-function getFinalData(target: any, data: any, func: any) {
-  if (!func) {
-    return data;
-  }
-  const newData = func(target, data);
-  return newData === undefined ? data : newData;
+export interface AspectPoint<T = any> {
+  before?: (context: FunctionContext<T>) => void;
+  after?: (context: FunctionContext<T>) => void;
+  error?: (context: FunctionContext<T>) => void;
+}
+
+function run(func: any, context: FunctionContext) {
+  func && func(context);
+}
+
+function createContext(inst: any, fn: Function, args: any[]) {
+  return {
+    functionName: (fn as any).__name || fn.name,
+    inst,
+    args,
+  } as FunctionContext;
 }
 
 function funcWrapper(point: AspectPoint, fn: Function) {
@@ -24,34 +36,54 @@ function funcWrapper(point: AspectPoint, fn: Function) {
 
   if (isGeneratorFunction(fn)) {
     newFn = function* (...args: any[]) {
+      const context = createContext(this, fn, args);
       try {
-        let result = yield fn.apply(this, getFinalData(this, args, point.before));
-        return getFinalData(this, result, point.after);
+        run(point.before, context);
+        context.ret = yield fn.apply(this, context.args);
+        run(point.after, context);
+        return context.ret;
       } catch (error) {
-        throw getFinalData(this, error, point.onError);
+        context.err = error;
+        run(point.error, context);
+        if (context.err) {
+          throw context.err;
+        }
       }
     };
   } else {
     // 非原生支持async的情况下没有有效方法判断async函数
     newFn = function (...args: any[]) {
+      const context = createContext(this, fn, args);
       try {
-        let result = fn.apply(this, getFinalData(this, args, point.before));
-        if (result instanceof Promise) {
-          result = result.then((ret) => {
-            return getFinalData(this, ret, point.after);
+        run(point.before, context);
+        context.ret = fn.apply(this, context.args);
+        if (context.ret instanceof Promise) {
+          context.ret = context.ret.then((ret) => {
+            context.ret = ret;
+            run(point.after, context);
+            return context.ret;
           });
-          if (point.onError) {
-            result = (result as Promise<any>)
+          if (point.error) {
+            context.ret = (context.ret as Promise<any>)
               .catch(error => {
-                throw getFinalData(this, error, point.onError);
+                context.err = error;
+                run(point.error, context);
+                if (context.err) {
+                  throw context.err;
+                }
               });
           }
-          return result;
+          return context.ret;
         } else {
-          return getFinalData(this, result, point.after);
+          run(point.after, context);
+          return context.ret;
         }
       } catch (error) {
-        throw getFinalData(this, error, point.onError);
+        context.err = error;
+        run(point.error, context);
+        if (context.err) {
+          throw context.err;
+        }
       }
     };
   }

@@ -47,11 +47,11 @@ export class Controller {
 function logging(type: string) {
   return aspect({
     // before method running
-    before: (inst, args) => { /* log code */ },
+    before: (context) => { /* log code */ },
     // after method running
-    after: (inst, ret) => { /* log code */ },
+    after: (context) => { /* log code */ },
     // when method throw error
-    onError: (inst, err) => { /* log code */ },
+    onError: (context) => { /* log code */ },
   })
 }
 
@@ -60,6 +60,15 @@ class DemoService {
   createData() {
     /* code */
   }
+}
+
+/* FunctionContext type define */
+export interface FunctionContext<T = any> {
+  readonly inst: T;
+  readonly functionName: string;
+  args: any[];
+  ret: any;
+  err: Error;
 }
 ```
 

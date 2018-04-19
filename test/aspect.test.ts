@@ -11,17 +11,17 @@ describe('test/aspect.test.js', () => {
 
     class A {
       @aspect({
-        before: (inst, args) => {
+        before: (context) => {
           order.push('1');
           before = true;
-          assert.equal(inst, a);
-          assert.deepEqual(args, ['test']);
+          assert.equal(context.inst, a);
+          assert.deepEqual(context.args, ['test']);
         },
-        after: (inst, ret) => {
+        after: (context) => {
           order.push('3');
           after = true;
-          assert.equal(inst, a);
-          assert.equal(ret, 'a:test');
+          assert.equal(context.inst, a);
+          assert.equal(context.ret, 'a:test');
         }
       })
       method(a: string) {
@@ -47,17 +47,17 @@ describe('test/aspect.test.js', () => {
 
     function test() {
       return aspect({
-        before: (inst, args) => {
+        before: (context) => {
           order.push('1');
           before = true;
-          assert.equal(inst, a);
-          assert.deepEqual(args, ['test']);
+          assert.equal(context.inst, a);
+          assert.deepEqual(context.args, ['test']);
         },
-        after: (inst, ret) => {
+        after: (context) => {
           order.push('3');
           after = true;
-          assert.equal(inst, a);
-          assert.equal(ret, 'a:test');
+          assert.equal(context.inst, a);
+          assert.equal(context.ret, 'a:test');
         }
       });
     }
@@ -79,20 +79,19 @@ describe('test/aspect.test.js', () => {
     assert.deepEqual(order, ['0', '1', '2', '3', '4']);
   });
 
-  it('onError', () => {
+  it('throw error', () => {
     let a: A;
     let error = false;
 
     class A {
       @aspect({
-        onError: (inst, _err) => {
-          assert.equal(inst, a);
+        error: (context) => {
+          assert.equal(context.inst, a);
           error = true;
         }
       })
       method(a: string) {
         throw new Error(a);
-
       }
     }
 
@@ -100,4 +99,71 @@ describe('test/aspect.test.js', () => {
     assert.throws(() => a.method('test'));
     assert.equal(error, true);
   });
+
+  it('replace args', () => {
+    class A {
+      @aspect({
+        before: (context) => {
+          assert.deepEqual(context.args, ['test']);
+          context.args = ['changeargs'];
+        },
+      })
+      method(a: string) {
+        return `a:${a}`;
+      }
+    }
+
+    assert.equal(new A().method('test'), 'a:changeargs');
+  });
+
+  it('replace ret', () => {
+    class A {
+      @aspect({
+        after: (context) => {
+          assert.equal(context.ret, 'a:test');
+          context.ret = 'changeret';
+        },
+      })
+      method(a: string) {
+        return `a:${a}`;
+      }
+    }
+
+    assert.equal(new A().method('test'), 'changeret');
+  });
+
+  it('catch error', () => {
+    class A {
+      @aspect({
+        error: (context) => {
+          context.err = undefined;
+        },
+      })
+      method(a: string) {
+        return `a:${a}`;
+      }
+    }
+
+    assert.doesNotThrow(() => new A().method('test'));
+  });
+
+  it('replace error', () => {
+    let testErr = new Error('test');
+
+    class A {
+      @aspect({
+        error: (context) => {
+          context.err = testErr;
+        },
+      })
+      method(a: string) {
+        throw new Error(a);
+      }
+    }
+
+    assert.throws(() => new A().method('test'), (err: Error) => {
+      return err === testErr;
+    });
+  });
+
 });
