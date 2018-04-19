@@ -6,9 +6,11 @@
   "typings": "lib/index.d.ts",
   "files": [
     "app/**/*.js",
+    "app/**/*.ts",
     "config/**/*.js",
+    "config/**/*.ts",
     "lib/**/*.js",
-    "**/*.d.ts"
+    "lib/**/*.ts"
   ],
   "eggPlugin": {
     "name": "aop"
@@ -22,7 +24,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^2.2.40",
-    "@types/node": "^7.0.12",
+    "@types/node": "^9.6.5",
     "@types/supertest": "^2.0.0",
     "autod": "^3.0.1",
     "egg-bin": "^4.7.0",
@@ -47,8 +49,7 @@
     "ci": "npm run cov",
     "autod": "autod",
     "ts": "rimraf app/**/*.js lib/**/*.js && tsc",
-    "prepublish": "npm run ts",
-    "postpublish": "node scripts/published.js"
+    "prepublish": "npm run ts"
   },
   "ci": {
     "version": "8"
