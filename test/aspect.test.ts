@@ -45,8 +45,8 @@ describe('test/aspect.test.js', () => {
     let after = false;
     let order: string[] = [];
 
-    class A {
-      @aspect({
+    function test() {
+      return aspect({
         before: (inst, args) => {
           order.push('1');
           before = true;
@@ -59,7 +59,11 @@ describe('test/aspect.test.js', () => {
           assert.equal(inst, a);
           assert.equal(ret, 'a:test');
         }
-      })
+      });
+    }
+
+    class A {
+      @test()
       async method(a: string) {
         order.push('2');
         return `a:${a}`;

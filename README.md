@@ -1,13 +1,15 @@
 # egg-aop
 
-## Quick overview
+Add DI, AOP support for eggjs.
 
-### DI
+## DI
+
+### Quick overview
 ```ts
 import { Service, Context } from 'egg';
 import { context, lazyInject } from 'egg-aop';
 
-@context()
+@context() // or @application()
 export class TestService extends Service {
   get() {
     /* code */
@@ -24,9 +26,23 @@ export class Controller {
 }
 ```
 
-## API
+### API
 
-#### aspect
+#### decoratros
+- `@context(keyType?: any)`
+- `@application(keyType?: any)`
+- `@inject(keyType?: any)`
+- `@lazyInject(keyType?: any)`
+
+#### functions
+- `getInstance<T = any>(clsType: any, app: any, ctx: any): T`
+- `setCreateInstanceHook(func: CreateInstanceHookFunction)`
+
+#### typeLoader
+
+## AOP
+
+### Quick overview
 ```ts
 function logging(type: string) {
   return aspect({
@@ -34,6 +50,8 @@ function logging(type: string) {
     before: (inst, args) => { /* log code */ },
     // after method running
     after: (inst, ret) => { /* log code */ },
+    // when method throw error
+    onError: (inst, err) => { /* log code */ },
   })
 }
 
@@ -45,8 +63,7 @@ class DemoService {
 }
 ```
 
-#### getInstance
+### API
 
-#### setCreateInstanceHook
-
-#### typeLoader
+#### functions
+- `aspect<T = any>(point: AspectPoint<T> = {})`
