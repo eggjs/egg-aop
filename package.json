@@ -19,7 +19,7 @@
     "typescript": true
   },
   "dependencies": {
-    "power-di": "^1.4.8",
+    "power-di": "^1.4.11",
     "tslib": "^1.9.0"
   },
   "devDependencies": {
@@ -37,7 +37,7 @@
     "supertest": "^3.0.0",
     "tslib": "^1.9.0",
     "tslint": "^5.9.1",
-    "typescript": "^2.8.1"
+    "typescript": "~2.8.1"
   },
   "engines": {
     "node": ">=8.9.0"

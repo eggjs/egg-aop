@@ -1,5 +1,4 @@
 import { Service } from 'egg';
-import { context } from '../../../../../lib';
 
 export class TestService extends Service {
 

@@ -29,7 +29,7 @@ export default class HomeController extends Controller {
   }
 
   public async getComponent() {
-    this.ctx.body = await this.ctx.getComponent<TestService>(TestService).sayHi('service');
+    this.ctx.body = await this.ctx.getComponent(TestService).sayHi('service');
   }
 
   public async appCount() {

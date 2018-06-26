@@ -1,5 +1,5 @@
 
-import { IocContext } from 'power-di';
+import { IocContext, GetReturnType } from 'power-di';
 import { getGlobalType } from 'power-di/utils';
 import { setApp, setCtx, ctxSymbol } from './appctx';
 import { typeLoader, register } from './typeLoader';
@@ -22,7 +22,7 @@ export function injectInstance(ioc: IocContext, inst: any, app: any, ctx: any) {
   });
 }
 
-export function getInstance<T = any>(clsType: any, app: any, ctx: any): T {
+export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app: any, ctx: any): GetReturnType<T, KeyType> {
   let ioc: IocContext = undefined;
 
   const useCtxProxyForAppComponent = app.config.aop.useCtxProxyForAppComponent;
