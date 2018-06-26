@@ -13,6 +13,15 @@ const ciHooks: CreateInstanceHookFunction[] = [];
 export function setCreateInstanceHook(func: CreateInstanceHookFunction) {
   ciHooks.push(func);
 }
+export function removeCreateInstanceHook(func: CreateInstanceHookFunction) {
+  const index = ciHooks.indexOf(func);
+  if (index >= 0) {
+    ciHooks.splice(index, 1);
+  }
+}
+export function clearCreateInstanceHook() {
+  ciHooks.splice(0);
+}
 
 export const contextTypeSymbol = Symbol('contextType');
 
@@ -28,8 +37,8 @@ export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app:
   const useCtxProxyForAppComponent = app.config.aop.useCtxProxyForAppComponent;
   const autoRegisterToCtx = app.config.aop.autoRegisterToCtx;
 
-  if (autoRegisterToCtx && !typeLoader.has(clsType)) {
-    register(clsType, clsType, 'Context');
+  if (autoRegisterToCtx && !typeLoader.has(clsType as any)) {
+    register(clsType, clsType, (clsType as any)[contextTypeSymbol] || 'Context');
   }
 
   const targetClsType = typeLoader.get<any>(clsType);
@@ -46,7 +55,7 @@ export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app:
     throw new Error(`ioc context NOT found! [${getGlobalType(clsType)}]`);
   }
 
-  let value = ioc.get<T>(clsType);
+  let value: any = ioc.get(clsType);
   if (value) { return value; }
 
   if (from === 'Application') {
@@ -91,7 +100,7 @@ export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app:
     setCtx(value, ctx);
   }
 
-  ioc.register(value, clsType);
+  ioc.register(value, clsType as any);
   injectInstance(ioc, value, app, ctx);
   return value;
 }
