@@ -9,12 +9,12 @@
 
 [npm-image]: https://img.shields.io/npm/v/egg-aop.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/egg-aop
-[travis-image]: https://img.shields.io/travis/zhang740/egg-aop.svg?style=flat-square
-[travis-url]: https://travis-ci.org/zhang740/egg-aop
-[codecov-image]: https://codecov.io/github/zhang740/egg-aop/coverage.svg?branch=master
-[codecov-url]: https://codecov.io/github/zhang740/egg-aop?branch=master
-[david-image]: https://img.shields.io/david/zhang740/egg-aop.svg?style=flat-square
-[david-url]: https://david-dm.org/zhang740/egg-aop
+[travis-image]: https://img.shields.io/travis/eggjs/egg-aop.svg?style=flat-square
+[travis-url]: https://travis-ci.org/eggjs/egg-aop
+[codecov-image]: https://codecov.io/github/eggjs/egg-aop/coverage.svg?branch=master
+[codecov-url]: https://codecov.io/github/eggjs/egg-aop?branch=master
+[david-image]: https://img.shields.io/david/eggjs/egg-aop.svg?style=flat-square
+[david-url]: https://david-dm.org/eggjs/egg-aop
 [snyk-image]: https://snyk.io/test/npm/egg-aop/badge.svg?style=flat-square
 [snyk-url]: https://snyk.io/test/npm/egg-aop
 [download-image]: https://img.shields.io/npm/dm/egg-aop.svg?style=flat-square
