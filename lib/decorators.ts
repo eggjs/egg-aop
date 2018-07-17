@@ -2,7 +2,7 @@ import { inject as pdInject, lazyInject as pdLazyInject } from 'power-di/helper'
 import { InstanceSource, getInstance } from './getInstance';
 import { register as typeRegister } from './typeLoader';
 import { getApp, getCtx } from './appctx';
-import { getClsTypeByDecorator } from 'power-di/lib/helper/decorators';
+import { getClsTypeByDecorator } from 'power-di/utils';
 
 /**
  * register component
@@ -75,7 +75,8 @@ export function lazyInject(type?: any) {
     pdLazyInject({ type })(target, key);
     const clsType = getClsTypeByDecorator(type, target, key);
 
-    const defaultValue = target[key];
+    const descriptor = Object.getOwnPropertyDescriptor(target, key);
+    const defaultValue = descriptor && descriptor.value;
     Object.defineProperty(target, key, {
       configurable: true,
       get: function () {

@@ -1,7 +1,10 @@
+import { setCreateInstanceHook, clearCreateInstanceHook } from '../lib';
+
 'use strict';
 
 const request = require('supertest');
 const mm = require('egg-mock');
+const assert = require('assert');
 
 describe('di normal', () => {
   let app: any;
@@ -17,10 +20,20 @@ describe('di normal', () => {
   afterEach(mm.restore);
 
   it('normal lazyInject', () => {
+    const insts: any[] = [];
+    setCreateInstanceHook((inst) => {
+      insts.push(inst);
+      return inst;
+    });
+
     return request(app.callback())
       .get('/')
       .expect('hi, egg')
-      .expect(200);
+      .expect(200)
+      .then(() => {
+        clearCreateInstanceHook();
+        assert.equal(insts.length, 1);
+      });
   });
 
   it('normal inject', () => {
@@ -61,5 +74,22 @@ describe('di normal', () => {
       .get('/appgetcomponent')
       .expect('2')
       .expect(200);
+  });
+
+  it('mutli level lazyInject', () => {
+    const insts: any[] = [];
+    setCreateInstanceHook((inst) => {
+      insts.push(inst);
+      return inst;
+    });
+
+    return request(app.callback())
+      .get('/mutli')
+      .expect('hi, egg')
+      .expect(200)
+      .then(() => {
+        clearCreateInstanceHook();
+        assert.equal(insts.length, 2);
+      });
   });
 });

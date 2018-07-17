@@ -2,6 +2,7 @@ import { Controller } from 'egg';
 import { lazyInject, inject } from '../../../../../lib';
 import { TestService } from '../service/test';
 import { AppLevelService } from '../service/app';
+import { Test2Service } from '../service/test2';
 
 export default class HomeController extends Controller {
   @lazyInject()
@@ -15,6 +16,9 @@ export default class HomeController extends Controller {
 
   @lazyInject()
   private appLevelService: AppLevelService;
+
+  @lazyInject()
+  private testService4: Test2Service;
 
   public async index() {
     this.ctx.body = await this.testService.sayHi('egg');
@@ -38,5 +42,9 @@ export default class HomeController extends Controller {
 
   public async appGetComponent() {
     this.ctx.body = await this.app.getComponent<AppLevelService>(AppLevelService).get();
+  }
+
+  public async mutli() {
+    this.ctx.body = await this.testService4.sayHi('egg');
   }
 }

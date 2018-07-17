@@ -9,4 +9,5 @@ export default (app: Application) => {
   router.get('/getcomponent', (controller as any).home.getComponent);
   router.get('/appcount', (controller as any).home.appCount);
   router.get('/appgetcomponent', (controller as any).home.appGetComponent);
+  router.get('/mutli', (controller as any).home.mutli);
 };

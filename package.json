@@ -6,11 +6,11 @@
   "typings": "lib/index.d.ts",
   "files": [
     "app/**/*.js",
-    "app/**/*.ts",
+    "app/**/*.d.ts",
     "config/**/*.js",
-    "config/**/*.ts",
+    "config/**/*.d.ts",
     "lib/**/*.js",
-    "lib/**/*.ts"
+    "lib/**/*.d.ts"
   ],
   "eggPlugin": {
     "name": "aop"
@@ -19,7 +19,7 @@
     "typescript": true
   },
   "dependencies": {
-    "power-di": "^1.4.11",
+    "power-di": "^1.4.16",
     "tslib": "^1.9.0"
   },
   "devDependencies": {
@@ -50,7 +50,8 @@
     "ci": "npm run cov",
     "autod": "autod",
     "ts": "rimraf app/**/*.js lib/**/*.js && tsc",
-    "prepublish": "npm run ts"
+    "prepublish": "npm run ts",
+    "postpublish": "node scripts/published.js"
   },
   "ci": {
     "version": "8"
