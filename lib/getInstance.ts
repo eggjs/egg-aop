@@ -34,8 +34,7 @@ export function injectInstance(ioc: IocContext, inst: any, app: any, ctx: any) {
 export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app: any, ctx: any): GetReturnType<T, KeyType> {
   let ioc: IocContext = undefined;
 
-  const useCtxProxyForAppComponent = app.config.aop.useCtxProxyForAppComponent;
-  const autoRegisterToCtx = app.config.aop.autoRegisterToCtx;
+  const { useCtxProxyForAppComponent, autoRegisterToCtx } = app.config.aop;
 
   if (autoRegisterToCtx && !typeLoader.has(clsType as any)) {
     register(clsType, clsType, (clsType as any)[contextTypeSymbol] || 'Context');

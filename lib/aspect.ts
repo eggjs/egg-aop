@@ -5,6 +5,8 @@ function isGeneratorFunction(fn: any) {
 
 export type Throwable = Error | any;
 
+export const FunctionContextSymbol = Symbol('FunctionContextSymbol');
+
 export interface FunctionContext<T = any> {
   readonly inst: T;
   readonly functionName: string;
@@ -73,6 +75,11 @@ function funcWrapper(point: AspectPoint, fn: Function) {
                 }
               });
           }
+          Object.defineProperty(context.ret, FunctionContextSymbol, {
+            enumerable: false,
+            configurable: true,
+            value: context,
+          });
           return context.ret;
         } else {
           run(point.after, context);
