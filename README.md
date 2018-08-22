@@ -78,7 +78,7 @@ export class Controller {
 
 #### typeLoader
 
-`typeLoader` is an instance of IOC Context, this stores all type's classes. You can use this to affect DI behavior.
+`typeLoader` is an instance of `IocContext`, it stores all type's classes. You can use this to affect DI behavior.
 
 ## AOP
 
