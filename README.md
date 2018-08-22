@@ -48,22 +48,22 @@ export class Controller {
 
 ### API
 
-#### decoratros
+#### decorators
 - `@context(keyType?: any)`
 
-  Declaration life cycle of instance, is context level. You can provide a class type or from metadata by TypeScript emit.
+  Declaration of life cycle of an instance, is context level. You can provide a class type or from metadata by TypeScript emit.
   
 - `@application(keyType?: any)`
 
-  Declaration life cycle of instance, is context level. You can provide a class type or from metadata by TypeScript emit.
+  Declaration of life cycle of an instance, is context level. You can provide a class type or from metadata by TypeScript emit.
 
 - `@inject(keyType?: any)`
 
-  Inject component when the class instantiation.
+  Inject component when the class is instantiated.
 
 - `@lazyInject(keyType?: any)`
 
-  Inject component when access the property.
+  Inject component when accessing the property.
 
 #### functions
 - `getInstance<T = any>(clsType: any, app: any, ctx: any): T`
@@ -78,7 +78,7 @@ export class Controller {
 
 #### typeLoader
 
-`typeLoader` is a instance of IocContext, this stored all type's classes. You can use this to affect DI behavior.
+`typeLoader` is an instance of IOC Context, this stores all type's classes. You can use this to affect DI behavior.
 
 ## AOP
 
@@ -117,7 +117,7 @@ export interface FunctionContext<T = any> {
 #### functions
 - `aspect<T = any>(point: AspectPoint<T> = {})`
 
-  You can use this to interception method, this function provide `before` / `after` / `error` cross-section.
+  You can use this to intercept method, this function provides `before` / `after` / `error` cross-sections.
 
   ```ts
   interface AspectPoint<T = any> {
@@ -127,4 +127,4 @@ export interface FunctionContext<T = any> {
   }
   ```
 
-  The param `context` is the function's execution context. It include `inst` / `args` / `ret`. You can replace them to affect the function execute.
+  The param `context` is the function's execution context. It includes `inst` / `args` / `ret`. You can replace them to affect the function execution.
