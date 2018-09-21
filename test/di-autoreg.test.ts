@@ -1,7 +1,5 @@
-'use strict';
-
-const request = require('supertest');
-const mm = require('egg-mock');
+import * as request from 'supertest';
+import mm from 'egg-mock';
 
 describe('di auto register', () => {
   let app: any;
