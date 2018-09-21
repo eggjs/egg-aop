@@ -33,7 +33,7 @@ function createContext(inst: any, fn: Function, args: any[]) {
   } as FunctionContext;
 }
 
-function funcWrapper(point: AspectPoint, fn: Function) {
+export function funcWrapper(point: AspectPoint, fn: Function) {
   let newFn: any;
 
   if (isGeneratorFunction(fn)) {
