@@ -2,6 +2,17 @@ import { aspect } from '../lib';
 import assert = require('power-assert');
 const co = require('co');
 
+async function assertThrowsAsync(fn: Function, regExp: RegExp) {
+  let f = () => { };
+  try {
+    await fn();
+  } catch (e) {
+    f = () => { throw e; };
+  } finally {
+    assert.throws(f, regExp);
+  }
+}
+
 describe('test/aspect.test.js', () => {
 
   it('normal', () => {
@@ -138,6 +149,27 @@ describe('test/aspect.test.js', () => {
 
     a = new A;
     assert.throws(() => a.method('test'));
+    assert.equal(error, true);
+  });
+
+  it('async, throw error', async () => {
+    let a: A;
+    let error = false;
+
+    class A {
+      @aspect({
+        error: (context) => {
+          assert.equal(context.inst, a);
+          error = true;
+        }
+      })
+      async method(a: string) {
+        throw new Error(a);
+      }
+    }
+
+    a = new A;
+    await assertThrowsAsync(async () => await a.method('test'), /Error/);
     assert.equal(error, true);
   });
 

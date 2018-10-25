@@ -1,4 +1,3 @@
-
 import { IocContext, GetReturnType } from 'power-di';
 import { getGlobalType } from 'power-di/utils';
 import { setApp, setCtx, ctxSymbol } from './appctx';
@@ -31,7 +30,7 @@ export function injectInstance(ioc: IocContext, inst: any, app: any, ctx: any) {
   });
 }
 
-export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app: any, ctx: any): GetReturnType<T, KeyType> {
+export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app: any, ctx?: any): GetReturnType<T, KeyType> {
   let ioc: IocContext = undefined;
 
   const { useCtxProxyForAppComponent, autoRegisterToCtx } = app.config.aop;
@@ -44,59 +43,60 @@ export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app:
   if (!targetClsType) {
     throw new Error(`ClassType [${getGlobalType(clsType)}] NOT found in typeLoader!`);
   }
-  const from = targetClsType[contextTypeSymbol];
+  const from: InstanceSource = targetClsType[contextTypeSymbol];
 
-  if (from === 'Application') {
-    ioc = useCtxProxyForAppComponent ? ctx.iocContext : app.iocContext;
-  } else if (from === 'Context') {
-    ioc = ctx.iocContext;
-  } else {
-    throw new Error(`ioc context NOT found! [${getGlobalType(clsType)}]`);
+  switch (from) {
+    case 'Application':
+      ioc = useCtxProxyForAppComponent ? ctx.iocContext : app.iocContext;
+      break;
+
+    case 'Context':
+      if (!ctx) {
+        throw new Error(`inject [${getGlobalType(clsType)}] MUST in Context class instance.`);
+      }
+      ioc = ctx.iocContext;
+      break;
   }
 
   let value: any = ioc.get(clsType);
   if (value) { return value; }
 
-  if (from === 'Application') {
-    if (!app) {
-      throw new Error(`inject [${getGlobalType(clsType)}] MUST in Application/Context class instance.`);
-    }
+  switch (from) {
+    case 'Application':
+      if (useCtxProxyForAppComponent) {
+        value = app.iocContext.get(clsType);
 
-    if (useCtxProxyForAppComponent) {
-      value = app.iocContext.get(clsType);
-
-      if (!value) {
-        value = new targetClsType(app);
-        setApp(value, app);
-        app.iocContext.register(value, clsType);
-        injectInstance(app.iocContext, value, app, ctx);
-      }
-
-      value = new Proxy<any>(value, {
-        get(target, property) {
-          if (property === ctxSymbol) {
-            return ctx;
-          }
-          if (property === 'constructor') {
-            return target[property];
-          }
-          return typeof target[property] === 'function' ? target[property].bind(value) : target[property];
+        if (!value) {
+          value = new targetClsType(app);
+          setApp(value, app);
+          app.iocContext.register(value, clsType);
+          injectInstance(app.iocContext, value, app, ctx);
         }
-      });
 
-      value = ciHooks.reduce((pre, cur) => cur(pre, app), value);
+        value = new Proxy<any>(value, {
+          get(target, property) {
+            if (property === ctxSymbol) {
+              return ctx;
+            }
+            if (property === 'constructor') {
+              return target[property];
+            }
+            return typeof target[property] === 'function' ? target[property].bind(value) : target[property];
+          }
+        });
 
-    } else {
-      value = ciHooks.reduce((pre, cur) => cur(pre, app), new targetClsType(app));
-      setApp(value, app);
-    }
+        value = ciHooks.reduce((pre, cur) => cur(pre, app), value);
 
-  } else if (from === 'Context') {
-    if (!ctx) {
-      throw new Error(`inject [${getGlobalType(clsType)}] MUST in Context class instance.`);
-    }
-    value = ciHooks.reduce((pre, cur) => cur(pre, app, ctx), new targetClsType(ctx));
-    setCtx(value, ctx);
+      } else {
+        value = ciHooks.reduce((pre, cur) => cur(pre, app), new targetClsType(app));
+        setApp(value, app);
+      }
+      break;
+
+    case 'Context':
+      value = ciHooks.reduce((pre, cur) => cur(pre, app, ctx), new targetClsType(ctx));
+      setCtx(value, ctx);
+      break;
   }
 
   ioc.register(value, clsType as any);

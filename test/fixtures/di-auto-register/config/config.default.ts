@@ -4,5 +4,6 @@ module.exports = {
   keys: '123456',
   aop: {
     autoRegisterToCtx: true,
+    useCtxProxyForAppComponent: true,
   }
 };

@@ -1,10 +1,8 @@
 import { setCreateInstanceHook, clearCreateInstanceHook } from '../lib';
 
-'use strict';
-
-const request = require('supertest');
-const mm = require('egg-mock');
-const assert = require('assert');
+import * as request from 'supertest';
+import mm from 'egg-mock';
+import assert = require('power-assert');
 
 describe('di normal', () => {
   let app: any;

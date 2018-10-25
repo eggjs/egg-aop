@@ -1,9 +1,7 @@
 import { setCreateInstanceHook, removeCreateInstanceHook, clearCreateInstanceHook } from '../lib';
 
-'use strict';
-
-const request = require('supertest');
-const mm = require('egg-mock');
+import * as request from 'supertest';
+import mm from 'egg-mock';
 
 describe('setCreateInstanceHook', () => {
   let app: any;
@@ -37,6 +35,8 @@ describe('setCreateInstanceHook', () => {
   });
 
   it('remove', () => {
+    removeCreateInstanceHook(undefined);
+
     const hook = (_inst: any, _app: any, _ctx: any) => {
       return {
         sayHi() {
