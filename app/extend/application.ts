@@ -4,7 +4,7 @@ import { getInstance } from '../../lib';
 
 const IOC = Symbol('Application#PowerDI');
 
-module.exports = {
+export default {
   get iocContext() {
     if (!this[IOC]) {
       this[IOC] = new IocContext();

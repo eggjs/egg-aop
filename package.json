@@ -10,7 +10,8 @@
     "config/**/*.js",
     "config/**/*.d.ts",
     "lib/**/*.js",
-    "lib/**/*.d.ts"
+    "lib/**/*.d.ts",
+    "typings/**/*.d.ts"
   ],
   "eggPlugin": {
     "name": "aop"
