@@ -24,7 +24,7 @@ describe('setCreateInstanceHook', () => {
       return {
         sayHi() {
           return 'setCreateInstanceHook';
-        }
+        },
       };
     });
 
@@ -41,7 +41,7 @@ describe('setCreateInstanceHook', () => {
       return {
         sayHi() {
           return 'setCreateInstanceHook';
-        }
+        },
       };
     };
     setCreateInstanceHook(hook);
@@ -58,7 +58,7 @@ describe('setCreateInstanceHook', () => {
       return {
         sayHi() {
           return 'setCreateInstanceHook';
-        }
+        },
       };
     };
     setCreateInstanceHook(hook);

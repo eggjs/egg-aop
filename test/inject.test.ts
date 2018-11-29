@@ -1,5 +1,5 @@
 import mm from 'egg-mock';
-import assert = require('power-assert');
+import assert = require('assert');
 import { inject, context } from '../lib';
 import { setApp, setCtx } from '../lib/appctx';
 
@@ -31,7 +31,7 @@ describe('inject', () => {
       bService: BService;
     }
 
-    const aService = new AService;
+    const aService = new AService();
     setApp(aService, app);
     setCtx(aService, ctx);
     assert.ok(aService.bService instanceof BService);

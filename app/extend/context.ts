@@ -14,5 +14,5 @@ export default {
     return function <T = any>(clsType: any) {
       return getInstance<T>(clsType, this.app, this);
     };
-  }
+  },
 };

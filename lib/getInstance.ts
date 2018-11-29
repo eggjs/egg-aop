@@ -31,7 +31,7 @@ export function injectInstance(ioc: IocContext, inst: any, app: any, ctx: any) {
 }
 
 export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app: any, ctx?: any): GetReturnType<T, KeyType> {
-  let ioc: IocContext = undefined;
+  let ioc: IocContext;
 
   const { useCtxProxyForAppComponent, autoRegisterToCtx } = app.config.aop;
 
@@ -56,6 +56,7 @@ export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app:
       }
       ioc = ctx.iocContext;
       break;
+    default:
   }
 
   let value: any = ioc.get(clsType);
@@ -82,7 +83,7 @@ export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app:
               return target[property];
             }
             return typeof target[property] === 'function' ? target[property].bind(value) : target[property];
-          }
+          },
         });
 
         value = ciHooks.reduce((pre, cur) => cur(pre, app), value);
@@ -97,6 +98,8 @@ export function getInstance<T = undefined, KeyType = any>(clsType: KeyType, app:
       value = ciHooks.reduce((pre, cur) => cur(pre, app, ctx), new targetClsType(ctx));
       setCtx(value, ctx);
       break;
+
+    default:
   }
 
   ioc.register(value, clsType as any);

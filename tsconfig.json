@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2017",
     "module": "commonjs",
     "jsx": "react",
     "moduleResolution": "node",
@@ -13,13 +13,7 @@
     "pretty": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "importHelpers": true
+    "importHelpers": false
   },
-  "include": [
-    "app",
-    "lib",
-    "config",
-    "scripts"
-  ],
   "compileOnSave": true
 }
