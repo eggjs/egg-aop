@@ -1,5 +1,5 @@
 import mm from 'egg-mock';
-import assert = require('power-assert');
+import assert = require('assert');
 import { getInstance, context, application } from '../lib';
 
 describe('getInstance', () => {

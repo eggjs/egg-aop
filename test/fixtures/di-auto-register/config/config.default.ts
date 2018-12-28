@@ -5,5 +5,5 @@ module.exports = {
   aop: {
     autoRegisterToCtx: true,
     useCtxProxyForAppComponent: true,
-  }
+  },
 };

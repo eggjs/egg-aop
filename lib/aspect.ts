@@ -22,10 +22,10 @@ export interface AspectPoint<T = any> {
 }
 
 function run(func: any, context: FunctionContext) {
-  func && func(context);
+  if (func) func(context);
 }
 
-function createContext(inst: any, fn: Function, args: any[]) {
+function createContext(inst: any, fn: (a: any) => void, args: any[]) {
   return {
     functionName: (fn as any).__name || fn.name,
     inst,
@@ -33,7 +33,7 @@ function createContext(inst: any, fn: Function, args: any[]) {
   } as FunctionContext;
 }
 
-export function funcWrapper(point: AspectPoint, fn: Function) {
+export function funcWrapper(point: AspectPoint, fn: (a: any) => void) {
   let newFn: any;
 
   if (isGeneratorFunction(fn)) {
@@ -60,7 +60,7 @@ export function funcWrapper(point: AspectPoint, fn: Function) {
         run(point.before, context);
         context.ret = fn.apply(this, context.args);
         if (context.ret instanceof Promise) {
-          context.ret = context.ret.then((ret) => {
+          context.ret = context.ret.then(ret => {
             context.ret = ret;
             run(point.after, context);
             return context.ret;
@@ -108,9 +108,9 @@ export function aspect<T = any>(point: AspectPoint<T> = {}) {
       get() {
         return fn;
       },
-      set(value: Function) {
-        fn = funcWrapper(point, value);
-      }
+      set(v: (a: any) => void) {
+        fn = funcWrapper(point, v);
+      },
     };
     Object.defineProperty(target, key, value);
     return value;

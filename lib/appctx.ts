@@ -3,7 +3,7 @@ export function setCtx(target: any, ctx: any) {
   Object.defineProperty(target, ctxSymbol, {
     enumerable: false,
     writable: false,
-    value: ctx
+    value: ctx,
   });
 }
 export function getCtx(target: any) {
@@ -15,7 +15,7 @@ export function setApp(target: any, app: any) {
   Object.defineProperty(target, appSymbol, {
     enumerable: false,
     writable: false,
-    value: app
+    value: app,
   });
 }
 export function getApp(target: any) {

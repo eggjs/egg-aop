@@ -1,8 +1,8 @@
 import { aspect } from '../lib';
-import assert = require('power-assert');
-const co = require('co');
+import assert = require('assert');
+import * as co from 'co';
 
-async function assertThrowsAsync(fn: Function, regExp: RegExp) {
+async function assertThrowsAsync(fn: () => {}, regExp: RegExp) {
   let f = () => { };
   try {
     await fn();
@@ -17,24 +17,26 @@ describe('test/aspect.test.js', () => {
 
   it('normal', () => {
     let a: A;
-    let before = false;
-    let after = false;
-    let order: string[] = [];
+    // tslint:disable-next-line
+    let isBefore = false;
+    // tslint:disable-next-line
+    let isAfter = false;
+    const order: string[] = [];
 
     class A {
       @aspect({
-        before: (context) => {
+        before: context => {
           order.push('1');
-          before = true;
+          isBefore = true;
           assert.equal(context.inst, a);
-          assert.deepEqual(context.args, ['test']);
+          assert.deepEqual(context.args, [ 'test' ]);
         },
-        after: (context) => {
+        after: context => {
           order.push('3');
-          after = true;
+          isAfter = true;
           assert.equal(context.inst, a);
           assert.equal(context.ret, 'a:test');
-        }
+        },
       })
       method(a: string) {
         order.push('2');
@@ -42,35 +44,35 @@ describe('test/aspect.test.js', () => {
       }
     }
 
-    a = new A;
+    a = new A();
     order.push('0');
     a.method('test');
     order.push('4');
-    assert.equal(before, true);
-    assert.equal(after, true);
-    assert.deepEqual(order, ['0', '1', '2', '3', '4']);
+    assert.equal(isBefore, true);
+    assert.equal(isAfter, true);
+    assert.deepEqual(order, [ '0', '1', '2', '3', '4' ]);
   });
 
   it('async', async () => {
     let a: A;
-    let before = false;
-    let after = false;
-    let order: string[] = [];
+    let isBefore = false;
+    let isAfter = false;
+    const order: string[] = [];
 
     function test() {
       return aspect({
-        before: (context) => {
+        before: context => {
           order.push('1');
-          before = true;
+          isBefore = true;
           assert.equal(context.inst, a);
-          assert.deepEqual(context.args, ['test']);
+          assert.deepEqual(context.args, [ 'test' ]);
         },
-        after: (context) => {
+        after: context => {
           order.push('3');
-          after = true;
+          isAfter = true;
           assert.equal(context.inst, a);
           assert.equal(context.ret, 'a:test');
-        }
+        },
       });
     }
 
@@ -82,35 +84,35 @@ describe('test/aspect.test.js', () => {
       }
     }
 
-    a = new A;
+    a = new A();
     order.push('0');
     await a.method('test');
     order.push('4');
-    assert.equal(before, true);
-    assert.equal(after, true);
-    assert.deepEqual(order, ['0', '1', '2', '3', '4']);
+    assert.equal(isBefore, true);
+    assert.equal(isAfter, true);
+    assert.deepEqual(order, [ '0', '1', '2', '3', '4' ]);
   });
 
   it('generator', async () => {
     let a: A;
     let before = false;
     let after = false;
-    let order: string[] = [];
+    const order: string[] = [];
 
     function test() {
       return aspect({
-        before: (context) => {
+        before: context => {
           order.push('1');
           before = true;
           assert.equal(context.inst, a);
-          assert.deepEqual(context.args, ['test']);
+          assert.deepEqual(context.args, [ 'test' ]);
         },
-        after: (context) => {
+        after: context => {
           order.push('3');
           after = true;
           assert.equal(context.inst, a);
           assert.equal(context.ret, 'a:test');
-        }
+        },
       });
     }
 
@@ -122,53 +124,55 @@ describe('test/aspect.test.js', () => {
       }
     }
 
-    a = new A;
+    a = new A();
     order.push('0');
     await co(a.method('test'));
     order.push('4');
     assert.equal(before, true);
     assert.equal(after, true);
-    assert.deepEqual(order, ['0', '1', '2', '3', '4']);
+    assert.deepEqual(order, [ '0', '1', '2', '3', '4' ]);
   });
 
   it('throw error', () => {
     let a: A;
+    // tslint:disable-next-line
     let error = false;
 
     class A {
       @aspect({
-        error: (context) => {
+        error: context => {
           assert.equal(context.inst, a);
           error = true;
-        }
+        },
       })
       method(a: string) {
         throw new Error(a);
       }
     }
 
-    a = new A;
+    a = new A();
     assert.throws(() => a.method('test'));
     assert.equal(error, true);
   });
 
   it('async, throw error', async () => {
     let a: A;
+    // tslint:disable-next-line
     let error = false;
 
     class A {
       @aspect({
-        error: (context) => {
+        error: context => {
           assert.equal(context.inst, a);
           error = true;
-        }
+        },
       })
       async method(a: string) {
         throw new Error(a);
       }
     }
 
-    a = new A;
+    a = new A();
     await assertThrowsAsync(async () => await a.method('test'), /Error/);
     assert.equal(error, true);
   });
@@ -176,9 +180,9 @@ describe('test/aspect.test.js', () => {
   it('replace args', () => {
     class A {
       @aspect({
-        before: (context) => {
-          assert.deepEqual(context.args, ['test']);
-          context.args = ['changeargs'];
+        before: context => {
+          assert.deepEqual(context.args, [ 'test' ]);
+          context.args = [ 'changeargs' ];
         },
       })
       method(a: string) {
@@ -192,7 +196,7 @@ describe('test/aspect.test.js', () => {
   it('replace ret', () => {
     class A {
       @aspect({
-        after: (context) => {
+        after: context => {
           assert.equal(context.ret, 'a:test');
           context.ret = 'changeret';
         },
@@ -208,7 +212,7 @@ describe('test/aspect.test.js', () => {
   it('catch error', () => {
     class A {
       @aspect({
-        error: (context) => {
+        error: context => {
           context.err = undefined;
         },
       })
@@ -221,12 +225,12 @@ describe('test/aspect.test.js', () => {
   });
 
   it('replace error', () => {
-    let testErr = new Error('test');
+    const testErr = new Error('test');
 
     class A {
       @aspect({
-        error: (context) => {
-          context.err = testErr;
+        error: ctx => {
+          ctx.err = testErr;
         },
       })
       method(a: string) {

@@ -2,7 +2,7 @@ import { setCreateInstanceHook, clearCreateInstanceHook } from '../lib';
 
 import * as request from 'supertest';
 import mm from 'egg-mock';
-import assert = require('power-assert');
+import assert = require('assert');
 
 describe('di normal', () => {
   let app: any;
@@ -19,7 +19,7 @@ describe('di normal', () => {
 
   it('normal lazyInject', () => {
     const insts: any[] = [];
-    setCreateInstanceHook((inst) => {
+    setCreateInstanceHook(inst => {
       insts.push(inst);
       return inst;
     });
@@ -76,7 +76,7 @@ describe('di normal', () => {
 
   it('mutli level lazyInject', () => {
     const insts: any[] = [];
-    setCreateInstanceHook((inst) => {
+    setCreateInstanceHook(inst => {
       insts.push(inst);
       return inst;
     });

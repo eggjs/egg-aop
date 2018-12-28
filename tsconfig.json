@@ -1,25 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2017",
     "module": "commonjs",
     "jsx": "react",
     "moduleResolution": "node",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "preserveConstEnums": true,
     "declaration": true,
     "sourceMap": false,
     "pretty": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
-    "importHelpers": true
+    "importHelpers": false
   },
-  "include": [
-    "app",
-    "lib",
-    "config",
-    "scripts"
-  ],
   "compileOnSave": true
 }

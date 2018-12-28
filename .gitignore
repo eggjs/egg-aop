@@ -11,9 +11,7 @@ package-lock.json
 /lib/**/*.js
 /test/**/*.js
 /config/**/*.js
-/scripts/**/*.js
 *.d.ts
 *.js.map
 .vscode
-!typings/**/*.d.ts
 .nyc_output

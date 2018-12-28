@@ -61,7 +61,7 @@ export function inject(type?: any) {
         const app = getApp(this) || (ctx && ctx.app);
         value = getInstance(clsType, app, ctx);
         return target[key];
-      }
+      },
     });
   };
 }
@@ -79,7 +79,7 @@ export function lazyInject(type?: any) {
     const defaultValue = descriptor && descriptor.value;
     Object.defineProperty(target, key, {
       configurable: true,
-      get: function () {
+      get () {
         const ctx = getCtx(this);
         const app = getApp(this) || (ctx && ctx.app);
         const value = getInstance(clsType, app, ctx);
