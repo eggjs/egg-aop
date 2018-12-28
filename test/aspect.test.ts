@@ -17,7 +17,9 @@ describe('test/aspect.test.js', () => {
 
   it('normal', () => {
     let a: A;
+    // tslint:disable-next-line
     let isBefore = false;
+    // tslint:disable-next-line
     let isAfter = false;
     const order: string[] = [];
 
@@ -31,7 +33,7 @@ describe('test/aspect.test.js', () => {
         },
         after: context => {
           order.push('3');
-          after = true;
+          isAfter = true;
           assert.equal(context.inst, a);
           assert.equal(context.ret, 'a:test');
         },
@@ -46,28 +48,28 @@ describe('test/aspect.test.js', () => {
     order.push('0');
     a.method('test');
     order.push('4');
-    assert.equal(before, true);
-    assert.equal(after, true);
+    assert.equal(isBefore, true);
+    assert.equal(isAfter, true);
     assert.deepEqual(order, [ '0', '1', '2', '3', '4' ]);
   });
 
   it('async', async () => {
     let a: A;
-    let before = false;
-    let after = false;
+    let isBefore = false;
+    let isAfter = false;
     const order: string[] = [];
 
     function test() {
       return aspect({
         before: context => {
           order.push('1');
-          before = true;
+          isBefore = true;
           assert.equal(context.inst, a);
           assert.deepEqual(context.args, [ 'test' ]);
         },
         after: context => {
           order.push('3');
-          after = true;
+          isAfter = true;
           assert.equal(context.inst, a);
           assert.equal(context.ret, 'a:test');
         },
@@ -86,8 +88,8 @@ describe('test/aspect.test.js', () => {
     order.push('0');
     await a.method('test');
     order.push('4');
-    assert.equal(before, true);
-    assert.equal(after, true);
+    assert.equal(isBefore, true);
+    assert.equal(isAfter, true);
     assert.deepEqual(order, [ '0', '1', '2', '3', '4' ]);
   });
 
@@ -133,7 +135,8 @@ describe('test/aspect.test.js', () => {
 
   it('throw error', () => {
     let a: A;
-    const error = false;
+    // tslint:disable-next-line
+    let error = false;
 
     class A {
       @aspect({
@@ -154,7 +157,8 @@ describe('test/aspect.test.js', () => {
 
   it('async, throw error', async () => {
     let a: A;
-    const error = false;
+    // tslint:disable-next-line
+    let error = false;
 
     class A {
       @aspect({
@@ -224,7 +228,11 @@ describe('test/aspect.test.js', () => {
     const testErr = new Error('test');
 
     class A {
-      @aspect()
+      @aspect({
+        error: ctx => {
+          ctx.err = testErr;
+        },
+      })
       method(a: string) {
         throw new Error(a);
       }

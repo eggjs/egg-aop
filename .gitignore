@@ -14,5 +14,4 @@ package-lock.json
 *.d.ts
 *.js.map
 .vscode
-!typings/**/*.d.ts
 .nyc_output
